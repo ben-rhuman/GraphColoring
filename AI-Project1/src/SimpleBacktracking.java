@@ -14,16 +14,24 @@ public class SimpleBacktracking {
         this.graph = graph;
         this.point = point;
         this.numColors = numColors;
-
+        
+        System.out.println("Testing Simple Backtracking Algorithm: ");
+        System.out.print("\n    Result: ");
+        
+        final long startTime = System.currentTimeMillis();
         boolean success = backtrackColoring(0);
+        final long endTime = System.currentTimeMillis();
+        
         if(success){
-            System.out.println("Graph colored");
-            for(int i = 0; i < point.length; i++){
-                System.out.println("Point " + i + ": " + point[i].color + ", ");
-            }
+            System.out.print("Graph Colored.");
+//            for(int i = 0; i < point.length; i++){               //Used to check correctness of node coloring
+//                System.out.println("Point " + i + ": " + point[i].color + ", ");
+//            }
         }else{
-            System.out.println("Failed to Color");
+            System.out.print("Failed to Color.");
         }
+        
+        System.out.println("\n    Total execution time: " + (endTime - startTime) + "\n" );
     }
 
     private boolean backtrackColoring(int current) {

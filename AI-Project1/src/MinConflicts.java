@@ -21,9 +21,14 @@ public class MinConflicts {
         pointArray = p;
         graphAM = am;
         kColors = c;
-
+        
+        System.out.println("Testing Min Conflict Algorithm: ");
+        System.out.print("\n    Result: ");
+        final long startTime = System.currentTimeMillis();
         addColors();
         cleanUp();
+        final long endTime = System.currentTimeMillis();
+        System.out.println("\n    Total execution time: " + (endTime - startTime) + "\n"  );
     }
 
     public void addColors() {
@@ -39,7 +44,7 @@ public class MinConflicts {
 
         for (int i = 0; i < 1000000; i++) { //iterating until desired max iterations
             if (checkDone()) {
-                System.out.println("graph colored");
+                System.out.print("Graph colored.");
                 return;
             }
             int counter = 0;
@@ -53,7 +58,7 @@ public class MinConflicts {
             fixConflict(conflicts[rnd]);
 
         }
-        System.out.println("fail");
+        System.out.print("Failed to Color.");
     }
 
     public void fixConflict(int index) {

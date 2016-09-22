@@ -20,15 +20,24 @@ public class ForwardChecking {
                 domain[i][j] = j + 1;
             }
         }
+        
+        System.out.println("Testing Backtracking with Forward Checking Algorithm: ");
+        System.out.print("\n    Result: ");
+        
+        final long startTime = System.currentTimeMillis();
         boolean success = BTForwardCheck(0);
+        final long endTime = System.currentTimeMillis();
+        
         if(success){
-            System.out.println("Graph colored");
-            for(int i = 0; i < point.length; i++){
-                System.out.println("Point " + i + ": " + point[i].color + ", ");
-            }
+            System.out.print("Graph Colored.");
+//            for(int i = 0; i < point.length; i++){                   //Used to check currectness of node coloring.
+//                System.out.println("Point " + i + ": " + point[i].color + ", ");
+//            }
         }else{
-            System.out.println("Failed to Color");
+            System.out.print("Failed to Color.");
         }
+        
+        System.out.println("\n    Total execution time: " + (endTime - startTime) + "\n"  );
     }
 
     public boolean BTForwardCheck(int current) { //Recursively traverse graph selecting node colors
