@@ -1,7 +1,8 @@
+
 /**
  * 17 September 2016
  *
- * @author benrhuman 
+ * @author benrhuman
  * Simple backtracking algorithm
  */
 public class SimpleBacktracking {
@@ -9,6 +10,7 @@ public class SimpleBacktracking {
     private int[][] graph;
     private Point[] point;
     private int numColors;
+    private int decisions;
 
     public SimpleBacktracking(int[][] graph, Point[] point, int numColors) {
         this.graph = graph;
@@ -16,13 +18,15 @@ public class SimpleBacktracking {
         this.numColors = numColors;
 
         boolean success = backtrackColoring(0);
-        if(success){
+        if (success) {
             System.out.println("Graph colored");
-            for(int i = 0; i < point.length; i++){
+            System.out.println("\n" + "decision number:" + decisions + "\n");
+            for (int i = 0; i < point.length; i++) {
                 System.out.println("Point " + i + ": " + point[i].color + ", ");
             }
-        }else{
+        } else {
             System.out.println("Failed to Color");
+            System.out.println("\n" + "decision number:" + decisions + "\n");
         }
     }
 
@@ -31,13 +35,16 @@ public class SimpleBacktracking {
             return true; //Successfully finished coloring graph.
         }
         for (int c = 1; c < numColors + 1; c++) { //Cycles through colors 1-3 or 1-4 looking for a possible color for the node.
-            if (colorable(current,c)) { //If the node has found a success full coloring we color it.
+            if (colorable(current, c)) { //If the node has found a successfull coloring we color it.
                 point[current].color = c;
-                if(backtrackColoring(current + 1)){
+                decisions++;
+                
+                if (backtrackColoring(current + 1)) {
                     return true;
-                }          
+                }
+
                 point[current].color = 0; // Reset the color if the next coloring failed.
-            }  
+            }
         }
         return false;
     }

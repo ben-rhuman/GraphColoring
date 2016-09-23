@@ -1,3 +1,4 @@
+
 /**
  * 17 September 2016
  *
@@ -9,6 +10,7 @@ public class ForwardChecking {
     private Point[] point;
     private int numColors;
     private int[][] domain;
+    private int decisions;
 
     public ForwardChecking(int[][] graph, Point[] point, int numColors) {
         this.graph = graph;
@@ -20,15 +22,24 @@ public class ForwardChecking {
                 domain[i][j] = j + 1;
             }
         }
+        
+        //final long startTime = System.currentTimeMillis();
         boolean success = BTForwardCheck(0);
+        //final long endTime = System.currentTimeMillis();
+        
         if(success){
-            System.out.println("Graph colored");
-            for(int i = 0; i < point.length; i++){
+            System.out.print("Graph Colored.");
+             System.out.println("\n"+"decision number:" + decisions + "\n" );
+             for (int i = 0; i < point.length; i++) {
                 System.out.println("Point " + i + ": " + point[i].color + ", ");
             }
+
         }else{
-            System.out.println("Failed to Color");
+            System.out.print("Failed to Color.");
+             System.out.println("\n"+"decision number:" + decisions + "\n" );
         }
+        
+        //System.out.println("\n    Total execution time: " + (endTime - startTime) + "\n"  );
     }
 
     public boolean BTForwardCheck(int current) { //Recursively traverse graph selecting node colors
@@ -37,14 +48,14 @@ public class ForwardChecking {
         }
         for (int i = 0; i < domain[current].length; i++) {
             if (domain[current][i] != 0) {
-//                int c = domain[current][i];
-//                domain[current][i] = 0;
+
                 if (colorable(current, domain[current][i])) {
                     point[current].color = domain[current][i];
-
+                      decisions++;
+                                
                     for (int j = 0; j < graph.length; j++) { //Searching through all connecting nodes
                         if (graph[current][j] == 1) { //If connection
-                            domain[current][point[current].color - 1] = 0;  // Remove the selected color from the nodes domain.
+                            domain[j][point[current].color - 1] = 0;  // Remove the selected color from the nodes domain.
                         }
                     }
 
@@ -78,13 +89,14 @@ public class ForwardChecking {
     public void restoreDomain(int current) {
         for (int j = 0; j < graph.length; j++) { //Searching through all connecting nodes
             if (graph[current][j] == 1) { //If connection
-                domain[current][point[current].color - 1] = point[current].color;  //reverse the previous domain deletion
+                domain[j][point[current].color - 1] = point[current].color;  //reverse the previous domain deletion
             }
         }
         point[current].color = 0;
     }
 
     public boolean emptyDomain(int num) {
+        decisions++;
         for (int j = 0; j < domain[num].length; j++) {
             if (domain[num][j] != 0) {
                 return false;
