@@ -1,6 +1,5 @@
-
 import java.util.Random;
-
+import java.util.ArrayList;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -21,14 +20,10 @@ public class MinConflicts {
         pointArray = p;
         graphAM = am;
         kColors = c;
-        
-        System.out.println("Testing Min Conflict Algorithm: ");
-        System.out.print("\n    Result: ");
-        final long startTime = System.currentTimeMillis();
+
         addColors();
+        
         cleanUp();
-        final long endTime = System.currentTimeMillis();
-        System.out.println("\n    Total execution time: " + (endTime - startTime) + "\n"  );
     }
 
     public void addColors() {
@@ -40,46 +35,54 @@ public class MinConflicts {
     }
 
     public void cleanUp() {
-        int[] conflicts = new int[pointArray.length]; 
+    	
 
         for (int i = 0; i < 1000000; i++) { //iterating until desired max iterations
             if (checkDone()) {
-                System.out.print("Graph colored.");
+                System.out.println("graph colored" + "Number of cycles was: " + i);
                 return;
             }
-            int counter = 0;
+            if(i % 20000 == 0){
+            	addColors();
+            }
+            
+            ArrayList<Point> conflicts = new ArrayList<Point>( ); 
+            
             for (int j = 0; j < pointArray.length; j++) { //create a conflict list
-            if (hasConflict(j)) {
-                conflicts[counter] = j;
-                counter++;
+            if (hasConflict(pointArray[j])) {
+                conflicts.add(pointArray[j]);
+               
             }
         }
-            rnd = new Random().nextInt(counter);
-            fixConflict(conflicts[rnd]);
+            rnd = new Random().nextInt(conflicts.size());
+            fixConflict(conflicts.get(rnd));
 
         }
-        System.out.print("Failed to Color.");
+        System.out.println("fail");
     }
 
-    public void fixConflict(int index) {
-        if (hasConflict(index) == false) {
+    public void fixConflict(Point point) {
+        if (hasConflict(point) == false) {
                 return;
             }
         
-        int oldConflictNum = 0;
-        int color = 1;
+        int oldConflictNum = numConflicts(point);
+        int color = point.color;
         
         for (int i = 1; i <= kColors; i++) { //check which color is the best
             int newConflictNum = 0;
 
-            for (int j = 0; j < pointArray.length; j++) { //checking if the color is the same
-                if (graphAM[index][j] == 1) {
+            for (int j = 0; j < pointArray.length; j++) { //checking if the color is the same as adjacent
+                if (graphAM[point.position][j] == 1) {
                     if (pointArray[j].color == i) {
                         newConflictNum++;
                     }
                 }
             }
-            if (newConflictNum <= oldConflictNum || i == 1) { //find color that causest least conflicts
+            if(newConflictNum == oldConflictNum){
+                
+            }
+            if (newConflictNum <= oldConflictNum ) { //find color that causest least conflicts
                 if(newConflictNum == oldConflictNum){
                    rnd = new Random().nextInt(2);
                    if(rnd == 0){
@@ -90,14 +93,26 @@ public class MinConflicts {
                 oldConflictNum = newConflictNum;
             }
         }
-        pointArray[index].color = color;
+        point.color = color;
+    }
+    
+    public int numConflicts(Point point){
+        int count = 0;
+        for (int i = 0; i < pointArray.length; i++) { //checking if the color is the same
+            if (graphAM[point.position][i] == 1) {
+                if (pointArray[i].color == point.color) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
-    public boolean hasConflict(int index) {
+    public boolean hasConflict(Point point) {
 
         for (int j = 0; j < pointArray.length; j++) { //checking if the color is the same
-            if (graphAM[index][j] == 1) {
-                if (pointArray[j].color == pointArray[index].color) {
+            if (graphAM[point.position][j] == 1) {
+                if (pointArray[j].color == point.color) {
                     return true;
                 }
             }
@@ -106,9 +121,9 @@ public class MinConflicts {
         return false;
     }
 
-    public boolean checkDone() {
+    public boolean checkDone() { //check if there are any conflicts
         for (int i = 0; i < pointArray.length; i++) {
-            if (hasConflict(i) == true) {
+            if (hasConflict(pointArray[i]) == true) {
                 return false;
             }
         }
