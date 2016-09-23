@@ -42,7 +42,7 @@ public class MinConflicts {
                 System.out.println("graph colored" + "Number of cycles was: " + i);
                 return;
             }
-            if(i % 20000 == 0){
+            if(i % 3000 == 0){
             	addColors();
             }
             
