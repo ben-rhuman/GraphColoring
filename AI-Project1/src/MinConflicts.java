@@ -13,11 +13,13 @@ import java.util.ArrayList;
  */
 public class MinConflicts {
 
-    private Point[] pointArray;
-    private int[][] graphAM;
-    private int kColors;
+    private final Point[] pointArray;
+    private final int[][] graphAM;
+    private final int kColors;
     private int rnd;
     private int decisions;
+    private int fixConflicts; //for printing
+    private int reRandomize; //for printing
 
     public MinConflicts(Point[] p, int[][] am, int c) {
         pointArray = p;
@@ -25,7 +27,17 @@ public class MinConflicts {
         kColors = c;
 
         addColors();
+        System.out.println("\n1. Adding colors");
 
+        for (int k = 0; k < pointArray.length; k++) { //printing points and colors
+            
+            System.out.print("Point " + (k) + ": " + pointArray[k].color + " \n");
+            if (k == pointArray.length - 1) {
+                System.out.println("\n");
+            }
+        }
+
+        System.out.println("2. Creating a conflict list and attempting to resolve it\n");
         cleanUp();
     }
 
@@ -39,16 +51,27 @@ public class MinConflicts {
 
     public void cleanUp() {
 
-        for (int i = 0; i < 1000000; i++) { //iterating until desired max iterations
+        for (int i = 0; i < 500000 * pointArray.length; i++) { //iterating until desired max iterations
             if (checkDone()) {
-                System.out.println("graph colored");
-                System.out.println("\n" + "decision number:" + decisions + "\n");
+                System.out.println("Graph Colored");
+                System.out.println("Decision number:" + decisions + "\n");
 
-                for (int k = 0; k < pointArray.length; k++) {
-                    System.out.println("Point " + k + ": " + pointArray[k].color + ", ");
+                System.out.println("Number of conflict fixing attempts: " + fixConflicts + '\n');
+                System.out.println("Number of re-randomization of colors: " + reRandomize + '\n');
 
+                for (int k = 0; k < pointArray.length; k++) { //printing points and colors
+
+                    System.out.print("Point " + (k) + ": " + pointArray[k].color + " \n");
+                    if (k == pointArray.length - 1) {
+                        System.out.println("\n");
+                    }
                 }
                 return;
+            }
+
+            if (i % 4000 == 0) { //If it hasn't yet found a solution its not likely it will with the current conflicts. Rerandomize and try again.
+                reRandomize++;
+                addColors();
             }
 
             ArrayList<Point> conflicts = new ArrayList<Point>();
@@ -59,6 +82,7 @@ public class MinConflicts {
 
                 }
             }
+
             rnd = new Random().nextInt(conflicts.size());
 
             decisions++;
@@ -67,11 +91,23 @@ public class MinConflicts {
 
         }
 
-        System.out.println("fail");
-        System.out.println("\n" + "decision number:" + decisions + "\n");
+        System.out.println("Failed to Color");
+        System.out.println("Decision number:" + decisions + "\n");
+
+        System.out.println("Number of conflict fixing attempts: " + fixConflicts + '\n');
+        System.out.println("Number of re-randomization of colors: " + reRandomize + '\n');
+
+        for (int k = 0; k < pointArray.length; k++) { //printing points and colors
+            
+            System.out.print("Point " + (k) + ": " + pointArray[k].color + " ");
+            if (k == pointArray.length - 1) {
+                System.out.println("\n");
+            }
+        }
     }
 
     public void fixConflict(Point point) {
+        fixConflicts++;
         if (hasConflict(point) == false) {
             return;
         }

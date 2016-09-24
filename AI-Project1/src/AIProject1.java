@@ -13,23 +13,27 @@ public class AIProject1 {
     public static void main(String[] args) {
         System.out.println("CSCI 446 Project 1 Graph Coloring Testing Results:");
 
-        for (int numColors = 4; numColors > 3; numColors--) {
-            System.out.println("Coloring with " + numColors + " colors.");
-            for (int graphSize = 10; graphSize < 31; graphSize = graphSize + 10) {
-                System.out.println("Number of Nodes in Graph: " + graphSize + "\n");
+        for (int numColors = 4; numColors >= 3; numColors--) {
+
+            for (int graphSize = 10; graphSize < 11; graphSize = graphSize + 10) {
+                System.out.println("Coloring with " + numColors + " colors.");
+                System.out.println("Number of Nodes in Graph: " + graphSize);
+
                 GraphGenerator g = new GraphGenerator(graphSize);
-                System.out.println("\n" + "MinConflicts" + "\n");
-                MinConflicts mc = new MinConflicts(g.pointArray, g.graphAM, numColors);
-                resetPoints(g.pointArray);
-                System.out.println("\n" + "SimpleBacktracking" + "\n");
-                SimpleBacktracking b = new SimpleBacktracking(g.graphAM, g.pointArray, numColors);
-                resetPoints(g.pointArray);
-                System.out.println("\n" + "ForwardChecking" + "\n");
-                ForwardChecking fc = new ForwardChecking(g.graphAM, g.pointArray, numColors);
-                resetPoints(g.pointArray);
-                System.out.println("\n" + "ArcConsistency" + "\n");
-                ArcConsistency ac = new ArcConsistency(g.graphAM, g.pointArray, numColors);
-                resetPoints(g.pointArray);
+
+                System.out.println("\nTesting Min Conflict Algorithm: ");
+                //MinConflicts mc = new MinConflicts(g.pointArray, g.graphAM, numColors);
+                System.out.println("==========================================");
+                //SimpleBacktracking sb = new SimpleBacktracking(g.graphAM, g.pointArray, numColors);
+                System.out.println("==========================================");
+                //ForwardChecking fc = new ForwardChecking(g.graphAM,g.pointArray,numColors);
+                System.out.println("==========================================");
+                //ArcConsistency ac = new ArcConsistency(g.graphAM, g.pointArray, numColors);
+                System.out.println("==========================================");
+                //Genetic gn = new Genetic(g.graphAM, g.pointArray, numColors);
+                
+                
+
                 System.out.println("---------------------------------------------------------------------");
             }
         }
@@ -237,46 +241,48 @@ class GraphGenerator {
 
                 }
             } else //one is vertical
-            if (a.x == b.x) {
-                //get equation of line for other line
+            {
+                if (a.x == b.x) {
+                    //get equation of line for other line
 
-                //m2= (c.y-d.y)/(c.x-d.x); //slope
-                m2 = cy.subtract(dy).divide(cx.subtract(dx), BigDecimal.ROUND_DOWN);
-                //b2 = c.y - m2*c.x; //y intercept
-                b2 = cy.subtract(m2.multiply(cx));
+                    //m2= (c.y-d.y)/(c.x-d.x); //slope
+                    m2 = cy.subtract(dy).divide(cx.subtract(dx), BigDecimal.ROUND_DOWN);
+                    //b2 = c.y - m2*c.x; //y intercept
+                    b2 = cy.subtract(m2.multiply(cx));
 
-                if (m2.signum() == 0) {//if other is horizontal
-                    //x = a.x;
-                    x = ax;
+                    if (m2.signum() == 0) {//if other is horizontal
+                        //x = a.x;
+                        x = ax;
 
-                } else {
+                    } else {
 
-                    //x = (a.x-b2)/m2; //possible intersection point
-                    x = ax.subtract(b2).divide(m2, BigDecimal.ROUND_DOWN);
+                        //x = (a.x-b2)/m2; //possible intersection point
+                        x = ax.subtract(b2).divide(m2, BigDecimal.ROUND_DOWN);
+                    }
+
+                    //return ((min(a.y,b.y) < b2) && (b2 < max(a.y,b.y))) && ((min(c.x,d.x) < x) && (x < max(c.x,d.x))); //check if x is in both lines
+                    return (((min(ay, by).compareTo(b2) == -1) && (max(ay, by).compareTo(b2) == 1)) && ((min(cx, dx).compareTo(x) == -1) && (max(cx, dx).compareTo(x) == 1)));
+
+                } else { //if other line is vertical
+                    //get equation of line for other line
+                    //m1= (a.y-b.y)/(a.x-b.x);
+                    m1 = ay.subtract(by).divide(ax.subtract(bx), BigDecimal.ROUND_DOWN);
+                    //b1 = a.y - m1*a.x;
+                    b1 = ay.subtract(m1.multiply(ax));
+
+                    if (m1.signum() == 0) {//if other is horizontal
+                        x = cx;
+
+                    } else {
+
+                        //x = (c.x-b1)/m1; //possible intersection point
+                        x = cx.subtract(b1).divide(m1, BigDecimal.ROUND_DOWN);
+                    }
+
+                    //return ((min(a.x,b.x) < x) && (x < max(a.x,b.x))) && ((min(c.y,d.y) < b1) && (b1 < max(c.y,d.y))); //check if x is in both lines
+                    return (((min(ax, bx).compareTo(x) == -1) && (max(ax, bx).compareTo(x) == 1)) && ((min(cy, dy).compareTo(b1) == -1) && (max(cy, dy).compareTo(b1) == 1)));
+
                 }
-
-                //return ((min(a.y,b.y) < b2) && (b2 < max(a.y,b.y))) && ((min(c.x,d.x) < x) && (x < max(c.x,d.x))); //check if x is in both lines
-                return (((min(ay, by).compareTo(b2) == -1) && (max(ay, by).compareTo(b2) == 1)) && ((min(cx, dx).compareTo(x) == -1) && (max(cx, dx).compareTo(x) == 1)));
-
-            } else { //if other line is vertical
-                //get equation of line for other line
-                //m1= (a.y-b.y)/(a.x-b.x);
-                m1 = ay.subtract(by).divide(ax.subtract(bx), BigDecimal.ROUND_DOWN);
-                //b1 = a.y - m1*a.x;
-                b1 = ay.subtract(m1.multiply(ax));
-
-                if (m1.signum() == 0) {//if other is horizontal
-                    x = cx;
-
-                } else {
-
-                    //x = (c.x-b1)/m1; //possible intersection point
-                    x = cx.subtract(b1).divide(m1, BigDecimal.ROUND_DOWN);
-                }
-
-                //return ((min(a.x,b.x) < x) && (x < max(a.x,b.x))) && ((min(c.y,d.y) < b1) && (b1 < max(c.y,d.y))); //check if x is in both lines
-                return (((min(ax, bx).compareTo(x) == -1) && (max(ax, bx).compareTo(x) == 1)) && ((min(cy, dy).compareTo(b1) == -1) && (max(cy, dy).compareTo(b1) == 1)));
-
             }
 
         } //end check for vertical lines
